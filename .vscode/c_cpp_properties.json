@@ -1,0 +1,59 @@
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "${workspaceFolder}/build/include",
+                "${workspaceFolder}/main",
+                "${IDF_PATH}/components/esp8266/include",
+                "${IDF_PATH}/components/app_update/include",
+                "${IDF_PATH}/components/bootloader_support/include",
+                "${IDF_PATH}/components/esp_common/include/",
+                "${IDF_PATH}/components/esp_event/include",
+                "${IDF_PATH}/components/esp_gdbstub/include",
+                "${IDF_PATH}/components/esp_http_client/include",
+                "${IDF_PATH}/components/esp_http_server/include",
+                "${IDF_PATH}/components/esp_https_ota/include",
+                "${IDF_PATH}/components/esp_ringbuf/include",
+                "${IDF_PATH}/components/freertos/include",
+                "${IDF_PATH}/components/freertos/port/esp8266/include",
+                "${IDF_PATH}/components/freertos/port/esp8266/include/freertos",
+                "${IDF_PATH}/components/freertos/include/freertos/private",
+                "${IDF_PATH}/components/freertos/include/freertos",
+                "${IDF_PATH}/components/heap/include",
+                "${IDF_PATH}/components/heap/port/esp8266/include",
+                "${IDF_PATH}/components/http_parser/include",
+                "${IDF_PATH}/components/jsmn/include",
+                "${IDF_PATH}/components/json/cJSON",
+                "${IDF_PATH}/components/log/include",
+                "${IDF_PATH}/components/lwip/include/apps/**",
+                "${IDF_PATH}/components/lwip/port/esp8266/include",
+                "${IDF_PATH}/components/lwip/lwip/src/include",
+                "${IDF_PATH}/components/mdns/include",
+                "${IDF_PATH}/components/mqtt/esp-mqtt/include",
+                "${IDF_PATH}/components/newlib/newlib/include",
+                "${IDF_PATH}/components/nvs_flash/include",
+                "${IDF_PATH}/components/openssl/include",
+                "${IDF_PATH}/components/protocomm/include",
+                "${IDF_PATH}/components/pthread/include",
+                "${IDF_PATH}/components/smartconfig_ack/include",
+                "${IDF_PATH}/components/spi_flash/include",
+                "${IDF_PATH}/components/spi_ram/include",
+                "${IDF_PATH}/components/spiffs/include",
+                "${IDF_PATH}/components/tcp_transport/include",
+                "${IDF_PATH}/components/tcpip_adapter/include",
+                "${IDF_PATH}/components/util/include",
+                "${IDF_PATH}/components/vfs/include",
+                "${IDF_PATH}/components/wifi_provisioning/include",
+                "${IDF_PATH}/components/wpa_supplicant/include"
+            ],
+            "defines": [
+                "__ESP_FILE__"
+            ],
+            "cStandard": "c17",
+            "cppStandard": "c++14",
+            "intelliSenseMode": "linux-clang-x64"
+        }
+    ],
+    "version": 4
+}

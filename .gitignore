@@ -1,0 +1,8 @@
+# SDK configuration
+sdkconfig*
+
+# Various binary images
+versions/
+
+# Build outputs
+build/
