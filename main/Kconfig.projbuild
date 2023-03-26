@@ -13,8 +13,22 @@ config ESP_WIFI_PASSWORD
 	WiFi password (WPA or WPA2) for the example to use.
 
 config ESP_WIFI_MAXIMUM_RETRY
-    int "WiFi maximum retry"
+    int "WiFi Maximum Retry"
     default 5
     help
     Set the maximum retry to avoid station reconnecting to the AP unlimited when the AP is really inexistent.
+
+config ESP_BROKER_IP
+    string "IPV4 Address of the Pub/Sub Broker"
+    default "192.168.4.22"
+    help
+       The IPV4 address of the pub/sub broker to connect, receive updates, and publish data.
+
+config ESP_BROKER_PORT
+    int "Pub/Sub Broker Port Number"
+    range 0 65535
+    default 33333
+    help
+        The remote port to which the client will connect to.
+
 endmenu
