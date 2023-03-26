@@ -1,14 +1,3 @@
 menu "Example Configuration"
 
-    config APP_AM2302_GPIO
-        int "GPIO pin for the temperature/humidity sensor AM2302"
-        default 4
-        help
-            GPIO pin for the temperature/humidity sensor AM2302.
-
-    config APP_CDS_GPIO
-        int "GPIO pin for the light sensor SZH-SSBH-011"
-        default 5
-        help
-            GPIO pin for the light sensor SZH-SSBH-011.
 endmenu
