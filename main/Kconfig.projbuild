@@ -12,9 +12,9 @@ config ESP_WIFI_PASSWORD
     help
 	WiFi password (WPA or WPA2) for the example to use.
 
-config ESP_MAXIMUM_RETRY
-    int "Maximum retry"
+config ESP_WIFI_MAXIMUM_RETRY
+    int "WiFi maximum retry"
     default 5
     help
-    Set the Maximum retry to avoid station reconnecting to the AP unlimited when the AP is really inexistent.
+    Set the maximum retry to avoid station reconnecting to the AP unlimited when the AP is really inexistent.
 endmenu
