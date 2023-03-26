@@ -12,10 +12,15 @@ void task_cds()
         val = gpio_get_level(CDS_GPIO_PIN);
         taskEXIT_CRITICAL();
 
-        ESP_LOGI(TAG, "%s", val == 1 ? "Dark" : "Bright");
-
         /* Turn on LED if dark and off if bright */
         gpio_set_level(BUILTIN_LED_GPIO, 1-val);
+
+        /* Publish data */
+        char data[MAX_DATA_LEN];
+        sprintf(data, "light=%s\n", val == 1 ? "Dark" : "Bright");
+        if (publish(CDS_PUBLISH_TOPIC, data, strlen(data)) != ESP_OK) {
+            break;
+        }
 
         vTaskDelay(CDS_TASK_INTERVAL / portTICK_PERIOD_MS);
     }
@@ -50,9 +55,9 @@ esp_err_t init_cds()
         ESP_LOGE(TAG, "Failed to initialize builtin LED");
         return ESP_FAIL;
     }
-    ESP_LOGI(TAG, "Builtin LED initialized");
 
     /* Need some delay to initialize GPIO */
     vTaskDelay(2000 / portTICK_PERIOD_MS);
+    ESP_LOGI(TAG, "Builtin LED initialized");
     return ESP_OK;
 }

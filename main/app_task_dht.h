@@ -10,20 +10,25 @@
  * repositories.
  */
 
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
+#include <string.h>
+
+#include "driver/gpio.h"
 #include "esp_log.h"
 #include "esp_system.h"
-#include "driver/gpio.h"
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
+
+#include "app_pubsub.h"
 
 #ifndef TAG
 #define TAG "APP"
 #endif
 
-#define DHT_TIMER_INTERVAL (2) /* DHT timer precision in microseconds */
+#define DHT_TIMER_INTERVAL (2)    /* DHT timer precision in microseconds */
 #define DHT_DATA_BITS      (40)
 #define DHT_TASK_INTERVAL  (5000) /* Task interval (in milliseconds) */
-#define DHT_GPIO_PIN       (4) /* GPIO pin for the sensor */
+#define DHT_GPIO_PIN       (4)    /* GPIO pin for the sensor */
+#define DHT_PUBLISH_TOPIC  ("dht22")
 
 /**
  * @brief Convert raw GPIO data to meaningful value by packing two data byptes
@@ -59,13 +64,14 @@ bool await_pin_state(uint32_t timeout, bool expected_state, uint32_t * duration)
 bool read_dht(bool bits[DHT_DATA_BITS]);
 
 /**
- * @brief Read and print temperature and humidity from the sensor.
+ * @brief Read and print temperature and humidity from the sensor. Send data to
+ * the pub/sub broker.
  */
 void task_dht();
 
 /**
- * @brief Initialize the GPIO for temperature and humidity sensor
- * (AM2302 or DHT22).
+ * @brief Initialize the GPIO for temperature and humidity sensor (AM2302 or
+ * DHT22).
  * 
  * @return ESP_OK on success, and ESP_FAIL on failure.
  */

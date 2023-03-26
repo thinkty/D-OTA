@@ -98,7 +98,12 @@ void task_dht()
         humidity = convert_data(data[0], data[1]) / 10;
         temperature = convert_data(data[2], data[3]) / 10;
 
-        ESP_LOGI(TAG, "humidity=%d%%, temperature=%d°C", humidity, temperature);
+        /* Publish data */
+        char data[MAX_DATA_LEN];
+        sprintf(data, "humidity=%d%%, temperature=%d°C\n", humidity, temperature);
+        if (publish(DHT_PUBLISH_TOPIC, data, strlen(data)) != ESP_OK) {
+            break;
+        }
 
         vTaskDelay(DHT_TASK_INTERVAL / portTICK_PERIOD_MS);
     }
@@ -126,6 +131,6 @@ esp_err_t init_dht()
     /* Need some delay to initialize GPIO */
     gpio_set_level(DHT_GPIO_PIN, 1);
     vTaskDelay(2000 / portTICK_PERIOD_MS);
-    ESP_LOGI(TAG, "Temperature/humidity sensor initialized");
+    ESP_LOGI(TAG, "Temperature/humidity sensor initialized...");
     return ESP_OK;
 }

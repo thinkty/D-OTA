@@ -14,11 +14,15 @@
  * repositories.
  */
 
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
+#include <string.h>
+
+#include "driver/gpio.h"
 #include "esp_log.h"
 #include "esp_system.h"
-#include "driver/gpio.h"
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
+
+#include "app_pubsub.h"
 
 #ifndef TAG
 #define TAG "APP"
@@ -27,9 +31,11 @@
 #define CDS_TASK_INTERVAL (5000) /* Task interval (in milliseconds) */
 #define CDS_GPIO_PIN      (5) /* GPIO pin for the sensor */
 #define BUILTIN_LED_GPIO  (GPIO_NUM_16)
+#define CDS_PUBLISH_TOPIC ("light")
 
 /**
  * @brief Read from the cds sensor and toggle the builtin LED based on value.
+ * Send data to the pub/sub broker.
  */
 void task_cds();
 
