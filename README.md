@@ -1,12 +1,14 @@
 # OTA
-Implementation of the Over-The-Air Device-Firmware-Update on the ESP8266 running the ESP8266 RTOS SDK (based on FreeRTOS).
+Implementation of the over-the-air device firmware update on the ESP8266 board running the [ESP8266 RTOS SDK](https://github.com/espressif/ESP8266_RTOS_SDK/tree/master).
 
 ## Requirements
 
 Make sure the development environment is set before building.
 For how to setup the tools, see the [Get Started](https://docs.espressif.com/projects/esp8266-rtos-sdk/en/latest/get-started/) document from Espressif.
 
-This project directory is expected to be in the `~/esp` directory along with the [*ESP8266_RTOS_SDK*](https://github.com/espressif/ESP8266_RTOS_SDK) and the *xtensa-lx106* toolchain since it is for the ESP8266 MCU.
+### Project Directory
+
+This project directory is expected to be in the `~/esp` directory along with the [ESP8266_RTOS_SDK](https://github.com/espressif/ESP8266_RTOS_SDK) and the *xtensa-lx106* toolchain since it is for the ESP8266 MCU.
 
 Example:
 ```
@@ -17,6 +19,27 @@ Example:
 ```
 
 For the description on the project structure, check the [document](https://docs.espressif.com/projects/esp8266-rtos-sdk/en/latest/api-guides/build-system.html#example-project).
+
+### Internet Connection
+
+Unlike the previous [project](https://github.com/thinkty/ESP8266-RTOS-OTA-DFU-AP), the ESP8266 device needs to connect to the internet in order to receive updates and publish sensor values.
+In order to access the internet, this project utilizes an access point (WiFi).
+The WiFi SSID and Password needs to be set in the configuration file (sdkconfig) which can be done using the command `make menuconfig` and selecting the `Example Configuration` option.
+
+### Sensors
+
+This project uses two additional sensors:
+
+- DHT22 : for collecting temperature and humidity data ([app_task_dht.h](https://github.com/thinkty/OTA/blob/main/main/app_task_dht.h))
+- SZH-SSBH-011 : a CDS photoresistor sensor to measure light intensity ([app_task_cds.h](https://github.com/thinkty/OTA/blob/main/main/app_task_cds.h))
+
+The sensor values are read in a preset interval and publishes the data to the pub/sub broker [bridge](https://github.com/thinkty/bridge).
+
+### Pub/Sub Broker
+
+As mentioned above, the sensor values are published to this broker and also the device subscribes to the update topic to receive firmware updates.
+[Bridge](https://github.com/thinkty/bridge) is just another hobby project of mine and it doesn't necessarily have to be Bridge.
+The user can choose whatever messaging platform/server/protocol they want to use, but it will require some changes to the code to meet the communication protocols for that specific service.
 
 ## Usage
 
