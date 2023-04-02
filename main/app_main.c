@@ -19,14 +19,15 @@ void app_main()
     /* Connect to WiFi */
     ESP_ERROR_CHECK(init_wifi());
 
-    // Initialize OTA-update TODO:
-    // ESP_ERROR_CHECK(init_ota());
+    /* Initialize OTA-update and run the OTA task to wait for message */
+    ESP_ERROR_CHECK(init_ota());
+    xTaskCreate(task_ota, "task_ota", DEFAULT_THREAD_STACKSIZE, NULL, DEFAULT_THREAD_PRIO, NULL);
 
-    // Initialize and run the temperature/humidity sensor task
+    /* Initialize and run the temperature/humidity sensor task */
     ESP_ERROR_CHECK(init_dht());
     xTaskCreate(task_dht, "task_dht", DEFAULT_THREAD_STACKSIZE, NULL, DEFAULT_THREAD_PRIO, NULL);
 
-    // Initialize and run the light sensor task
+    /* Initialize and run the light sensor task */
     ESP_ERROR_CHECK(init_cds());
     xTaskCreate(task_cds, "task_cds", DEFAULT_THREAD_STACKSIZE, NULL, DEFAULT_THREAD_PRIO, NULL);
 }
