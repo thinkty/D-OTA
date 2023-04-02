@@ -1,7 +1,13 @@
 
 #include "app_wifi.h"
 
-static void event_handler(void * arg, esp_event_base_t event_base, int32_t event_id, void * event_data)
+/* FreeRTOS event group to signal when connected*/
+static EventGroupHandle_t s_wifi_event_group;
+
+/* Keeping track of AP connection retry */
+static int s_retry_num = 0;
+
+void event_handler(void * arg, esp_event_base_t event_base, int32_t event_id, void * event_data)
 {
     /* Stationary mode started */
     if (event_base == WIFI_EVENT && event_id == WIFI_EVENT_STA_START) {
