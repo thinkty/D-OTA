@@ -74,58 +74,12 @@ void task_ota()
     }
     ESP_LOGI(TAG, "Receiving new update...");
 
-    // TODO:
-    size_t total = 0;
-	for (;;) {
-		/* First two bytes indicate size */
-        char size_buf[CMD_PUB_MSG_LEN];
-		if (recv(ota_firm.sock, size_buf, CMD_PUB_MSG_LEN, 0) <= 0) {
-			ESP_LOGE(TAG, "Error while receiving size of publish message");
-            close(ota_firm.sock);
-            vTaskDelete(NULL);
-			return;
-		}
+    if (handle_publish_message(ota_firm.sock, write_ota) != ESP_OK) {
+        close(ota_firm.sock);
+        vTaskDelete(NULL);
+        return;
+    }
 
-		uint16_t size = ntohs(size_buf[0] << 8 | size_buf[1]);
-		uint16_t received = 0;
-
-		/* Make sure to read until the specified size */
-        char data_buf[CMD_PUB_MSG_MAX + 1];
-		memset(data_buf, 0, CMD_PUB_MSG_MAX + 1);
-	    ssize_t ret;
-		while (received < size) {
-			if ((ret = recv(ota_firm.sock, &data_buf[received], size - received, 0)) <= 0) {
-				ESP_LOGE(TAG, "Error while receiving publish message");
-                close(ota_firm.sock);
-                vTaskDelete(NULL);
-				return;
-			}
-
-			received += ret;
-		}
-
-		/* End of stream */
-		data_buf[size] = '\0';
-		if (strcmp(data_buf, CMD_PUB_MSG_END) == 0) {
-			break;
-		}
-
-        /* If not the end of stream, invoke the callback function */
-        total += received;
-        if (write_ota(data_buf, size) != ESP_OK) {
-            ESP_LOGE(TAG, "Error while invoking callback function for the publish message");
-            close(ota_firm.sock);
-            vTaskDelete(NULL);
-            return;
-        }
-	}
-    ESP_LOGI(TAG, "Received %u bytes in total...", total);
-
-    // if (handle_publish_message(ota_firm.sock, write_ota) != ESP_OK) {
-    //     close(ota_firm.sock);
-    //     vTaskDelete(NULL);
-    //     return;
-    // }
     close(ota_firm.sock);
     ESP_LOGI(TAG, "Applying patch...");
 

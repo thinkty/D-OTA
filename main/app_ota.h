@@ -16,7 +16,7 @@
 
 typedef struct esp_ota_firm {
     esp_ota_handle_t handle;    // Update handle for OTA related tasks
-    esp_partition_t * updating; // OTA partition to update
+    const esp_partition_t * updating; // OTA partition to update
     size_t ota_size;            // Image size
     int sock;                   // Socket for subscribing
 } esp_ota_firm_t;
