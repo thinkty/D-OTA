@@ -6,6 +6,7 @@
 #include "lwip/sys.h"
 
 #include "app_ota.h"
+#include "app_dota.h"
 #include "app_task_dht.h"
 #include "app_task_cds.h"
 #include "app_wifi.h"
@@ -19,9 +20,13 @@ void app_main()
     /* Connect to WiFi */
     ESP_ERROR_CHECK(init_wifi());
 
+    /* Initialize Delta OTA-update and run the DOTA task to wait for message */
+    ESP_ERROR_CHECK(init_dota());
+    xTaskCreate(task_dota, "task_dota", DEFAULT_THREAD_STACKSIZE, NULL, DEFAULT_THREAD_PRIO, NULL);
+
     /* Initialize OTA-update and run the OTA task to wait for message */
-    ESP_ERROR_CHECK(init_ota());
-    xTaskCreate(task_ota, "task_ota", DEFAULT_THREAD_STACKSIZE, NULL, DEFAULT_THREAD_PRIO, NULL);
+//    ESP_ERROR_CHECK(init_ota());
+//    xTaskCreate(task_ota, "task_ota", DEFAULT_THREAD_STACKSIZE, NULL, DEFAULT_THREAD_PRIO, NULL);
 
     /* Initialize and run the temperature/humidity sensor task */
     ESP_ERROR_CHECK(init_dht());
