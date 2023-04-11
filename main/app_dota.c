@@ -217,6 +217,7 @@ esp_err_t read_appy_delta()
         ESP_LOGE(TAG, "Error while opening delta file");
         return ESP_FAIL;
     }
+    ESP_LOGI(TAG, "Opened delta file to read the patch...");
 
     /* Apply patch using callbacks */
     int ret = detools_apply_patch_callbacks(
@@ -229,6 +230,7 @@ esp_err_t read_appy_delta()
     );
 
     if (ret <= 0) {
+        ESP_LOGE(TAG, "Error: detools_apply_patch_callbacks() - %s", detools_error_as_string(ret));
         return ESP_FAIL;
     }
     return ESP_OK;
@@ -276,6 +278,7 @@ void task_dota()
         vTaskDelete(NULL);
         return;
     }
+    ESP_LOGI(TAG, "Successfully read and applied update...");
 
     /* Verify the new firmware image and set the boot partition */
     if (end_ota() != ESP_OK) {
