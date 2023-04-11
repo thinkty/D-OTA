@@ -5,6 +5,9 @@
             "includePath": [
                 "${workspaceFolder}/build/include",
                 "${workspaceFolder}/main",
+                "${workspaceFolder}/components/heatshrink/include",
+                "${workspaceFolder}/components/detools/include",
+                "${workspaceFolder}/components/delta/include",
                 "${IDF_PATH}/components/**"
             ],
             "defines": [
