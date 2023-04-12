@@ -1,5 +1,7 @@
-# OTA
-Implementation of the over-the-air device firmware update on the ESP8266 board running the [ESP8266 RTOS SDK](https://github.com/espressif/ESP8266_RTOS_SDK/tree/master).
+# D-OTA
+Implementation of the delta (differential) over-the-air device firmware update on the ESP8266 board running the [ESP8266 RTOS SDK](https://github.com/espressif/ESP8266_RTOS_SDK/tree/master).
+Delta OTA update is different from a normal OTA update in a way that it receives only the differential of the previous firmware and the new firmware.
+Therefore, the resulting transactions have relatively low overhead.
 
 ## Requirements
 
@@ -41,14 +43,36 @@ As mentioned above, the sensor values are published to this broker and also the 
 [Bridge](https://github.com/thinkty/bridge) is just another hobby project of mine and it doesn't necessarily have to be Bridge.
 The user can choose whatever messaging platform/server/protocol they want to use, but it will require some changes to the code to meet the communication protocols for that specific service.
 
+### Partitions
+
+The flash partition is stored in the [partitions.csv](https://github.com/thinkty/OTA/blob/main/partitions.csv) to support OTA and also delta OTA updates.
+
+The OTA partitions to store the new and current images are 640 KB each, and the storage for the delta file is 128 KB.
+This means that the images should be less than 640 KB.
+The storage partition is in between the two OTA partitions due to the required offset (that seems to be a [bug](https://github.com/espressif/ESP8266_RTOS_SDK/issues/1097)?).
+
+To specify the partition table, run `make menuconfig`, select `Partition Table` > `Partition Table` > `Custom partition table CSV`, and specify the file name in `Custom partition CSV file`.
+Details on the partition tables can be found [here](https://github.com/espressif/ESP8266_RTOS_SDK/blob/master/docs/en/api-guides/partition-tables.rst).
+
+In addition, to enable the file system to store the delta file, enable [SPIFFS](https://github.com/espressif/ESP8266_RTOS_SDK/tree/master/examples/storage/spiffs).
+
+### Delta Patch Tools
+
+There are various differential generator/patcher algorithms and compression algorithms available.
+For this project, I've used [detools](https://github.com/eerimoq/detools) (>= 0.53.0) to create/apply the patch, and [heatshrink](https://github.com/atomicobject/heatshrink) (>= 0.4.1) to handle the compression/decompression of the patch.
+
+To create the delta file, one can simply install the detools command line tool and run the following command.
+
+```
+detools create_patch --compression heatshrink old-image new-image patch-name
+```
+
 ## Usage
 
 Run `make menuconfig` to configure the project with the `sdkconfig` file, and make sure to save it.
 
 The default serial port for your ESP8266 board can be set through `Serial flasher config > Default serial port`.
 Depending on the OS, on Windows, the port will have names like `COM1`. On Linux, it will be like `/dev/ttyUSB#` or `/dev/ttyACM#`.
-
-If an error message such as `Permission denied: '/dev/ttyACM1'` appears, run `sudo usermod -a -G dialout $USER` to add the current user to the group which has permissions or run `sudo chmod -R 777 /dev/ttyUSB0` to change the device to be accessible by all users, groups, etc.
 
 | Command                      |                                                                               Description                                                                               |
 |------------------------------|:-----------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
