@@ -1,7 +1,7 @@
 # D-OTA
 Implementation of the delta (differential) over-the-air device firmware update on the ESP8266 board running the [ESP8266 RTOS SDK](https://github.com/espressif/ESP8266_RTOS_SDK/tree/master).
 Delta OTA update is different from a normal OTA update in a way that it receives only the differential of the previous firmware and the new firmware.
-Therefore, the resulting transactions have relatively low overhead.
+Therefore, the resulting transactions have relatively low overhead compared to the normal OTA update that sends the entire firmware image.
 
 ## Requirements
 
@@ -67,6 +67,8 @@ To create the delta file, one can simply install the detools command line tool a
 detools create_patch --compression heatshrink old-image new-image patch-name
 ```
 
+The patch tools are all contained within the [components](https://github.com/thinkty/D-OTA/tree/main/components) directory.
+
 ## Usage
 
 Run `make menuconfig` to configure the project with the `sdkconfig` file, and make sure to save it.
@@ -78,6 +80,7 @@ Depending on the OS, on Windows, the port will have names like `COM1`. On Linux,
 |------------------------------|:-----------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
 | `make menuconfig`            |                                                 Open the configuration tool to create the `sdkconfig` configuration file                                                |
 | `make all`                   | Compile your project code. In the first time running after installing ESP8266 RTOS SDK, the command will compile all components for the SDK as well and take some time. |
+| `make app`                   |                                                                     Compile only the project code.                                                                      |
 | `make flash`                 |                            Compile, generate bootloader, partition table, and application binaries, and flash app image to your ESP8266 board                           |
 | `make flash ESPPORT= <port>` |                                                       Override the port specified in the sdkconfig file and flash                                                       |
 | `make monitor`               |                                                              Open the serial monitor for your ESP8266 board                                                             |
@@ -88,6 +91,14 @@ Depending on the OS, on Windows, the port will have names like `COM1`. On Linux,
 
 Similar to overriding the port when flashing, the port for the monitor can be modfied as well.
 See the [document](https://docs.espressif.com/projects/esp8266-rtos-sdk/en/latest/get-started/index.html#environment-variables) for more variables that can be specified.
+
+To use this in conjunction with the Bridge pub/sub broker, run the broker first, configure the port and IP address by running `make menuconfig`, and flash the image onto the ESP8266 board.
+Once the device successfully boots, it will subscribe to the preset topic (ex. update) to receive the delta file or the whole firmware image.
+Create a delta file using `detools` and make sure that the compression is done using `heatshrink`.
+It might be a good idea to save each version of the firmware image for convenience.
+With the delta file ready, send it using any tool that is capable of sending tcp messages (or one can also use the [bridge-tester](https://github.com/thinkty/bridge-tester) instead) to the pub/sub broker.
+Once the pub/sub broker receives the file, it will relay it to the subscribed hosts and the patch should be applied as soon as the file arrives.
+When the patch is applied, the device will automatically go into a software reset and boot with the new firmware image from the appropriate partition.
 
 ## License
 
