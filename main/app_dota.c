@@ -236,16 +236,16 @@ esp_err_t read_appy_delta()
     return ESP_OK;
 }
 
-esp_err_t end_ota()
+esp_err_t end_dota()
 {
     if (esp_ota_end(dota_firm.handle) != ESP_OK) {
-        ESP_LOGE(TAG, "Error while end_ota, esp_ota_end failed!");
+        ESP_LOGE(TAG, "Error end_dota, esp_ota_end failed!");
         return ESP_FAIL;
     }
 
     esp_err_t err = esp_ota_set_boot_partition(dota_firm.updating);
     if (err != ESP_OK) {
-        ESP_LOGE(TAG, "Error while end_ota, failed to set boot partition err=0x%x", err);
+        ESP_LOGE(TAG, "Error end_dota, failed to set boot partition err=0x%x", err);
         return ESP_FAIL;
     }
 
@@ -281,7 +281,7 @@ void task_dota()
     ESP_LOGI(TAG, "Successfully read and applied update...");
 
     /* Verify the new firmware image and set the boot partition */
-    if (end_ota() != ESP_OK) {
+    if (end_dota() != ESP_OK) {
         vTaskDelete(NULL);
         return;
     }

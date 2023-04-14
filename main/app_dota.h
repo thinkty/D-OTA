@@ -17,9 +17,10 @@
 #define TAG "APP"
 #endif
 
-#define DOTA_TOPIC "update"
+#define DOTA_TOPIC "delta"
 #define DOTA_SPIFF "/spiffs" /* Default base path for the virtual file system */
 #define DOTA_DELTA "/delta"  /* Path to store the delta file */
+#define DOTA_TASK_STACKSIZE (4096) /* Need more stack than default */
 
 typedef struct esp_dota_firm {
     esp_ota_handle_t handle;    // Update handle for OTA related tasks
@@ -60,12 +61,12 @@ esp_err_t write_delta(char * buf, size_t len);
 esp_err_t read_appy_delta();
 
 /**
- * @brief Finish OTA update, validate newly written app image, and set boot
- * partition.
+ * @brief Finish  delta OTA update, validate newly written app image, and set
+ * boot partition.
  * 
  * @return ESP_OK on success, and ESP_FAIL on failure.
  */
-esp_err_t end_ota();
+esp_err_t end_dota();
 
 /**
  * @brief Handle incoming heartbeat messages and publish messages. Apply the
