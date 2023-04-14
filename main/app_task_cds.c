@@ -45,7 +45,7 @@ esp_err_t init_cds()
         ESP_LOGE(TAG, "Failed to initialize CDS sensor");
         return ESP_FAIL;
     }
-    ESP_LOGI(TAG, "CSD sensor initialized");
+    ESP_LOGI(TAG, "CDS sensor initialized");
 
     /* Configure the builtin LED GPIO */
     io_conf.mode = GPIO_MODE_OUTPUT;

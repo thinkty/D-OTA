@@ -1,7 +1,16 @@
 
 #include "app_task_dht.h"
 
-int16_t convert_data(uint8_t msb, uint8_t lsb)
+/**
+ * @brief Convert raw GPIO data to meaningful value by packing two data byptes
+ * and take into account sign bit.
+ * 
+ * @param msb Data byte containing the most significant bit.
+ * @param lsb Data byte containing the least significant bit.
+ * 
+ * @returns Signed integer value.
+ */
+static int16_t convert_data(uint8_t msb, uint8_t lsb)
 {
     int16_t data = msb & 0x7F;
     data <<= 8;
@@ -14,7 +23,16 @@ int16_t convert_data(uint8_t msb, uint8_t lsb)
     return data;
 }
 
-bool await_pin_state(uint32_t timeout, bool expected_state, uint32_t * duration)
+/**
+ * @brief Wait for the GPIO pin to change for the given timeout. The timeout is
+ * needed for the initialization step and also for data interpretation to
+ * indicate 0 or 1.
+ * 
+ * @param timeout Time to wait.
+ * @param expected_state Expected state of the GPIO pin after timeout.
+ * @param duration Optional. Used for interpreting data.
+ */
+static bool await_pin_state(uint32_t timeout, bool expected_state, uint32_t * duration)
 {
     for (uint32_t i = 0; i < timeout; i += DHT_TIMER_INTERVAL) {
         /* Need to wait at least a single interval to prevent reading jitter */
@@ -30,7 +48,16 @@ bool await_pin_state(uint32_t timeout, bool expected_state, uint32_t * duration)
     return false;
 }
 
-bool read_dht(bool bits[DHT_DATA_BITS])
+/**
+ * @brief Fetch data from the temperature/humidity sensor.
+ * 
+ * @see https://github.com/Fonger/ESP8266-RTOS-DHT/blob/master/dht/dht.c
+ * 
+ * @param bits Boolean array indicating the bits to store the result.
+ * 
+ * @returns True on successfully data fetched and false on error.
+ */
+static bool read_dht(bool bits[DHT_DATA_BITS])
 {
     /* Phase 'A' pulling signal low to initiate read sequence */
     gpio_set_level(DHT_GPIO_PIN, 0);
@@ -81,6 +108,7 @@ void task_dht()
 
         /* Failed to read value */
         if (!res) {
+            ESP_LOGE(TAG, "Failed to read temperature/humidity sensor value");
             break;
         }
 
@@ -92,6 +120,7 @@ void task_dht()
 
         /* Checksum */
         if (data[4] != ((data[0] + data[1] + data[2] + data[3]) & 0xFF)) {
+            ESP_LOGE(TAG, "Failed to read temperature/humidity sensor value");
             break;
         }
 
@@ -102,6 +131,7 @@ void task_dht()
         char data[MAX_DATA_LEN];
         sprintf(data, "humidity=%d%%, temperature=%d°C\n", humidity, temperature);
         if (publish(DHT_PUBLISH_TOPIC, data, strlen(data)) != ESP_OK) {
+            ESP_LOGE(TAG, "Failed to publish temperature/humidity data");
             break;
         }
 
@@ -109,7 +139,6 @@ void task_dht()
     }
 
     /* Remove this task if an error occurs in the loop */
-    ESP_LOGE(TAG, "Failed to read temperature/humidity sensor value");
     vTaskDelete(NULL);
 }
 
