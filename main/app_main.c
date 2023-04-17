@@ -22,11 +22,11 @@ void app_main()
 
     /* Initialize Delta OTA-update and run the DOTA task to wait for message */
     ESP_ERROR_CHECK(init_dota());
-    xTaskCreate(task_dota, "task_dota", DEFAULT_THREAD_STACKSIZE, NULL, DEFAULT_THREAD_PRIO, NULL);
+    xTaskCreate(task_dota, "task_dota", DOTA_TASK_STACKSIZE, NULL, DEFAULT_THREAD_PRIO, NULL);
 
     /* Initialize OTA-update and run the OTA task to wait for message */
-//    ESP_ERROR_CHECK(init_ota());
-//    xTaskCreate(task_ota, "task_ota", DEFAULT_THREAD_STACKSIZE, NULL, DEFAULT_THREAD_PRIO, NULL);
+    ESP_ERROR_CHECK(init_ota());
+    xTaskCreate(task_ota, "task_ota", DEFAULT_THREAD_STACKSIZE, NULL, DEFAULT_THREAD_PRIO, NULL);
 
     /* Initialize and run the temperature/humidity sensor task */
     ESP_ERROR_CHECK(init_dht());
